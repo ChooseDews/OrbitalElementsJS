@@ -1,6 +1,7 @@
 //library
 const convert = require('./lib');
 
+console.log(convert);
 
 //library example usage;
 //orbital elements to convert
