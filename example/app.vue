@@ -4,6 +4,12 @@
 
 
 <div class="sidebar">
+
+  <div class="entry">
+    <a class="btn btn-outline-dark btn-sm" href="https://github.com/ChooseDews/OrbitalElementsJS">Github</a> <a class="btn btn-outline-dark btn-sm" @click="random()">Random Orbit</a>
+  </div>
+
+
   <div class="entry">
     <h5>Orbital Elements</h5>
     <form @submit.prevent="toPosition">
@@ -96,6 +102,13 @@
     </table>
   </div>
 
+  <div class="entry">
+    <h5 class="p-2 m-0">John Dews-Flick</h5>
+    <h6>University of Florida</h6>
+
+  </div>
+
+
 
   </div>
 
@@ -116,6 +129,7 @@ console.log('here', library);
 
 let vectToObject = (v) => ({x: v[0], y: v[1], z: v[2] });
 let objectToVec = (v) => ([v.x, v.y, v.z]);
+let roundVec = (v) => v.map(x=>$.round(x,6));
 
 //let r_p = [4249.24395473, -2054.84062287, 2446.99585787];
 //let v_p = [0.01436795, 0.00921151, -0.00442301];
@@ -131,6 +145,10 @@ let gatherPoint = function(n, mu){
   return angle;
 }
 
+function rNumber(min, max) {
+  return $.round(Math.random() * (max - min) + min, 4);
+}
+
 export default {
   components: {orbitView},
   data(){
@@ -143,6 +161,18 @@ export default {
     }
   },
   methods: {
+    random(){
+      //random input some elements
+      this.elements = {
+        ω: rNumber(0, 360),
+        i: rNumber(0, 360),
+        e: rNumber(0, 1),
+        Ω: rNumber(0, 360),
+        ν: rNumber(0, 360),
+        a: rNumber(20000, 80000)
+      }
+      this.toPosition();
+    },
     updateChart(){
 
       let mu = this.mu
@@ -162,8 +192,8 @@ export default {
       let mu = this.mu;
       let res = library.computeECI(n.ω, n.i, n.Ω, n.a, n.e, n.ν, mu, true);
       console.log(res);
-      this.v = vectToObject(res.v)
-      this.r = vectToObject(res.r)
+      this.v = vectToObject(roundVec(res.v))
+      this.r = vectToObject(roundVec(res.r))
 
       this.updateChart();
 
@@ -265,6 +295,15 @@ width: 100%;
   }
 }
 
+@media only screen and (min-width: 700px) {
+
+  .sidebar{
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+
+}
 
 
 
