@@ -18,31 +18,31 @@
     <table class="vars">
       <tr>
         <td class="title">Ω</td>
-        <td ><input v-model="elements['Ω']" type="number" step="any" name="" value="" required></td>
+        <td ><input v-model="elements['Ω']" type="number" step="any"  required></td>
         <td class="unit">°</td>
       </tr>
       <tr>
         <td class="title">ω</td>
-        <td ><input v-model="elements['ω']" type="number" step="any" name="" value="" required></td>
+        <td ><input v-model="elements['ω']" type="number" step="any"  required></td>
         <td class="unit">°</td>
       </tr>
       <tr>
         <td class="title">i</td>
-        <td ><input v-model="elements['i']" type="number" step="any" name="" value="" required></td>
+        <td ><input v-model="elements['i']" type="number" step="any"  required></td>
         <td class="unit">°</td>
       </tr>
       <tr>
         <td class="title">ν</td>
-        <td ><input v-model="elements['ν']" type="number" step="any" name="" value="" required></td>
+        <td ><input v-model="elements['ν']" type="number" step="any"  required></td>
         <td class="unit">°</td>
       </tr>
       <tr>
         <td class="title">e</td>
-        <td><input v-model="elements['e']" type="number" step="any" name="" value="" required></td>
+        <td><input v-model="elements['e']" type="number" step="any"  required></td>
       </tr>
       <tr>
         <td class="title">a</td>
-        <td><input v-model="elements['a']" type="number" step="any" name="" value="" required></td>
+        <td><input v-model="elements['a']" type="number" step="any"  required></td>
         <td class="unit">km</td>
       </tr>
     </table>
@@ -58,33 +58,33 @@
     <table class="vars">
       <tr>
         <td class="title">R<sub>x</sub></td>
-        <td ><input v-model="r.x" type="number" step="any" name="" value="" required></td>
+        <td ><input v-model="r.x" type="number" step="any"  required></td>
         <td class="unit">km</td>
       </tr>
       <tr>
         <td class="title">R<sub>y</sub></td>
-        <td ><input v-model="r.y" type="number" step="any" name="" value="" required></td>
+        <td ><input v-model="r.y" type="number" step="any"  required></td>
         <td class="unit">km</td>
       </tr>
       <tr>
         <td class="title">R<sub>z</sub></td>
-        <td ><input v-model="r.z" type="number" step="any" name="" value="" required></td>
+        <td ><input v-model="r.z" type="number" step="any"  required></td>
         <td class="unit">km</td>
       </tr>
       <tr>
         <td class="title">V<sub>x</sub></td>
-        <td ><input v-model="v.x" type="number" step="any" name="" value="" required></td>
-        <td class="unit">km</td>
+        <td ><input v-model="v.x" type="number" step="any"  required></td>
+        <td class="unit">km/s</td>
       </tr>
       <tr>
         <td class="title">V<sub>y</sub></td>
-        <td ><input v-model="v.y" type="number" step="any" name="" value="" required></td>
-        <td class="unit">km</td>
+        <td ><input v-model="v.y" type="number" step="any"  required></td>
+        <td class="unit">km/s</td>
       </tr>
       <tr>
         <td class="title">V<sub>z</sub></td>
-        <td ><input v-model="v.z" type="number" step="any" name="" value="" required></td>
-        <td class="unit">km</td>
+        <td ><input v-model="v.z" type="number" step="any"  required></td>
+        <td class="unit">km/s</td>
       </tr>
     </table>
     <button type="submit" class="m-3 btn btn-primary btn-sm">Convert</button>
@@ -96,8 +96,8 @@
     <table class="vars">
       <tr>
         <td class="title">μ</td>
-        <td><input v-model="mu" type="number" step="any" name="" value="" required></td>
-        <td style="width: auto" class="unit">km<sup>3</sup>s<sup>-2</sup></td>
+        <td><input v-model="mu" type="number" step="any"  required></td>
+        <td style="width: auto" class="unit">km<sup>3</sup>/s<sup>2</sup></td>
       </tr>
     </table>
   </div>
