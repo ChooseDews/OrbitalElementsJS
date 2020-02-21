@@ -1,10 +1,7 @@
-import vue from 'vue';
-
-console.log('here')
-
+import vue from 'vue/dist/vue.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import mainApp from './app.vue';
 var app = new vue({
   el: '#app',
-  data: {
-    message: 'Hello Vue!'
-  }
+  components: {mainApp}
 })

@@ -4,11 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build index.html -d ./../docs --public-url ./"
   },
   "author": "John Dews-Flick",
   "license": "ISC",
   "dependencies": {
-    "vue": "^2.6.11"
+    "bootstrap": "^4.4.1",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.16.1",
+    "three": "^0.113.2",
+    "vue": "^2.6.11",
+    "vue-hot-reload-api": "^2.3.4"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^3.1.1",
+    "cssnano": "^4.1.10",
+    "sass": "^1.25.0",
+    "vue-template-compiler": "^2.6.11"
   }
 }

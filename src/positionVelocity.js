@@ -31,6 +31,14 @@ let createTransform = (ω, i, Ω) => {
 };
 
 let computeECI = (ω, i, Ω, a, e, ν, μ, isDegree) => {
+    //these must be numbers!
+    ω = Number(ω);
+    i = Number(i);
+    Ω = Number(Ω);
+    a = Number(a);
+    e = Number(e);
+    ν = Number(ν);
+    μ = Number(μ);
 
     if (isDegree || $.max(ω, i, Ω, ν) > 7) {
         ω = d2Rad(ω);
@@ -38,6 +46,7 @@ let computeECI = (ω, i, Ω, a, e, ν, μ, isDegree) => {
         Ω = d2Rad(Ω);
         ν = d2Rad(ν);
     }
+
 
     //start the calculations
     let p = a * (1 - e * e);

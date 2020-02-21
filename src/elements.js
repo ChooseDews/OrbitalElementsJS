@@ -1,6 +1,6 @@
 const $ = require('mathjs')
 let norm = (v) => $.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-let r2Deg = (r) => (180 * r / $.pi).toFixed(3);
+let r2Deg = (r) => $.round(180 * r / $.pi, 4);
 
 let μ = 1;
 let r_p = [4249.24395473, -2054.84062287, 2446.99585787];

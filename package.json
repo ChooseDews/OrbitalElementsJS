@@ -2,7 +2,7 @@
   "name": "orbitelements",
   "version": "1.0.0",
   "description": "",
-  "main": "lib.js",
+  "main": "./src/lib.js",
   "scripts": {
     "test": "mocha"
   },
