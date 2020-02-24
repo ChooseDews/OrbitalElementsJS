@@ -17,15 +17,11 @@ import * as j from "jquery";
 let $ = j.default;
 import library from './../src/lib.js';
 
-const fontJson = require( "three/examples/fonts/gentilis_bold.typeface.json" );
-
 
 import {
   TrackballControls
 } from "three/examples/jsm/controls/TrackballControls.js";
 
-
-const font = new THREE.Font( fontJson );
 
 //config
 let CANVAS_WIDTH = 100,
