@@ -15,9 +15,17 @@
 import * as THREE from "three";
 import * as j from "jquery";
 let $ = j.default;
+import library from './../src/lib.js';
+
+const fontJson = require( "three/examples/fonts/gentilis_bold.typeface.json" );
+
+
 import {
   TrackballControls
 } from "three/examples/jsm/controls/TrackballControls.js";
+
+
+const font = new THREE.Font( fontJson );
 
 //config
 let CANVAS_WIDTH = 100,
@@ -31,7 +39,9 @@ let CANVAS_WIDTH = 100,
   craftRadius = 300, //km
   mu = 398600,
   accelerationVectorColor = 0xff0000,
-  velocityVectorColor = 0xffff00;
+  velocityVectorColor = 0xffff00,
+  eccentricityVectorColor = 0x008000,
+  momentumVectorColor = 0xffff00;
 
   let scaleFactor = 0.01; //this converts km to 3d units within the browser. To big and things wont render
   let scale = x => x.map(i => i * scaleFactor);
@@ -83,7 +93,7 @@ export default {
 
       if(this.stats && this.stats.r){
          updateCraft(this.stats.r)
-         updateArrow(this.stats.r, this.stats.v)
+         updateArrow(this.stats.r, this.stats.v, this.stats.orbitVectors)
        }
 
     }
@@ -154,6 +164,9 @@ export default {
     }
 
 
+
+
+
     //setup velocity and acceleration vector
     let accelerationVector = spacecraft.position.clone().negate(); //points toward the planet
     accelerationVector.normalize();
@@ -164,6 +177,8 @@ export default {
       accelerationVectorColor
     );
     scene.add(accelerationArrow);
+
+
     let velocityVector = new THREE.Vector3(4, 1, 0);
     velocityVector.normalize();
     let velocityArrow = new THREE.ArrowHelper(
@@ -175,10 +190,51 @@ export default {
     scene.add(velocityArrow);
 
 
+    //setup momentum Vector
+    let momentumVector = spacecraft.position.clone().negate(); //points toward the planet
+    momentumVector.normalize();
+    let momentumArrow = new THREE.ArrowHelper(
+      momentumVector,
+      earth.position.clone(),
+      300,
+      momentumVectorColor
+    );
+    scene.add(momentumArrow);
 
-    updateArrow = function (r, v) { //handles craft acceleration and velocity vector position and direction
+
+    //setup eccentricity vector
+    let eccentricityVector = spacecraft.position.clone().negate(); //points toward the planet
+    eccentricityVector.normalize();
+    let eccentricityArrow = new THREE.ArrowHelper(
+      eccentricityVector,
+      earth.position.clone(),
+      150,
+      eccentricityVectorColor
+    );
+    //scene.add(eccentricityArrow);
+
+
+
+
+    updateArrow = function (r, v, vecs) { //handles craft acceleration and velocity vector position and direction
       r = objectToVec(r);
       v = objectToVec(v);
+
+      console.log(vecs);
+      let h_p = vecs.h_p;
+
+      let mPos = new THREE.Vector3(...scaleFix(h_p)).normalize();;
+      momentumArrow.setDirection(mPos);
+
+      console.log('updating arrows' , vecs.e_p)
+
+      let ePos = new THREE.Vector3(...scaleFix(vecs.e_p)).normalize();;
+      eccentricityArrow.setDirection(ePos);
+
+
+
+
+
 
       velocityArrow.position.set(...scaleFix(r));
       accelerationArrow.position.set(...scaleFix(r));

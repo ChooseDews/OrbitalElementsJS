@@ -57,11 +57,15 @@ let computeECI = (ω, i, Ω, a, e, ν, μ, isDegree) => {
     let r_vec = [r * $.cos(ν), r * $.sin(ν), 0];
     let v_vec = [-$.sin(ν) * G, ($.cos(ν) + e) * G, 0];
 
+    let h_p = $.cross(r_vec, v_vec);
+
+
     return {
         r: T(r_vec),
         v: T(v_vec),
         p,
-        a
+        a,
+        h_p
     }
 
 }

@@ -9,6 +9,38 @@ let v_p = [0.01436795, 0.00921151, -0.00442301];
 //let r_p = [5249.24, -2054.84, 2446.99];
 //let v_p = [0.0143, 0.00921, -0.0044];
 
+
+let orbitVectors = (r_p, v_p, μ) => {
+
+  let h_p = $.cross(r_p, v_p);
+  let h = norm(h_p, 3);
+  let r = norm(r_p, 3);
+  let p = h * h / μ
+
+  let vxh = $.cross(v_p, h_p)
+  let rr = $.multiply(-1 / r, r_p)
+  let e_p = $.add($.multiply(1 / μ, vxh), rr);
+  let e = norm(e_p);
+  let a = p / (1 - e * e);
+
+  let r_min = p/(1+e)
+  let r_max = p/(1-e)
+
+  let n = {
+    h_p,
+    e_p,
+    e,
+    h,
+    a,
+    p,
+    r_min,
+    r_max
+  }
+  console.log('orbit vectors: ', n)
+  return n;
+
+}
+
 let getElements = (r_p, v_p, μ) => {
 
     let h_p = $.cross(r_p, v_p);
@@ -56,7 +88,10 @@ let getElements = (r_p, v_p, μ) => {
         ν,
         e,
         a,
-        p
+        p,
+        h_p,
+        e_p,
+        h
     }
 
 }
@@ -65,6 +100,7 @@ let getElements = (r_p, v_p, μ) => {
 
 module.exports = {
     getElements,
+    orbitVectors,
     r2Deg,
     norm
 }

@@ -114,6 +114,9 @@
 
 
   <div class="mainbar">
+    <div class="crash alert alert-danger" v-if="crash">
+        Orbit Collides With Earth
+    </div>
     <orbit-view :positions="positions" :stats="stats"></orbit-view>
   </div>
 
@@ -139,7 +142,7 @@ let v_p = [8.286176, 1.815144, 3.624759]; //mini-project 1 - Molniya orbit
 
 let gatherPoint = function(n, mu){
   let angle = [];
-  for(let i = 0; i < 360; i++){
+  for(let i = 0; i < 362; i++){
     angle[i] = library.computeECI(n.ω, n.i, n.Ω, n.a, n.e, i, mu, true);
   }
   return angle;
@@ -157,7 +160,8 @@ export default {
       v: vectToObject(v_p) || {},
       r: vectToObject(r_p) || {},
       mu: 398600,
-      stats: {}
+      stats: {},
+      crash: false
     }
   },
   methods: {
@@ -166,7 +170,7 @@ export default {
       this.elements = {
         ω: rNumber(0, 360),
         i: rNumber(0, 360),
-        e: rNumber(0, 1),
+        e: rNumber(0, 0.95),
         Ω: rNumber(0, 360),
         ν: rNumber(0, 360),
         a: rNumber(20000, 80000)
@@ -181,9 +185,22 @@ export default {
       let positions = angleStats.map(x=>x.r);
       this.positions = positions;
 
+      let r = objectToVec(this.r);
+      let v = objectToVec(this.v);
+      console.log('here');
+      let orbitVectors = library.orbitVectors(r, v, mu);
+      console.log('here', orbitVectors);
+
+      this.crash = false;
+
+      if(orbitVectors.r_min < 6371){
+        this.crash = true;
+      }
+
       this.stats = {
         r: this.r,
-        v: this.v
+        v: this.v,
+        orbitVectors
       }
 
     },
@@ -220,6 +237,13 @@ export default {
 </script>
 
 <style lang="scss">
+
+
+.crash{
+  position: absolute;
+  padding: 15px;
+  right: 0;
+}
 
 .sidebar{
   width: 300px;
