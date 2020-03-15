@@ -4,11 +4,14 @@ This is a simple javascript library which allows you to solve for the [orbital e
 
 ## [Demo](https://choosedews.github.io/OrbitalElementsJS/)
 
+![demo](/example/example.gif)
+
+## Library Usage
+
 ### Install
     npm i https://github.com/ChooseDews/OrbitalElementsJS
 ### Usage
     const OrbitElement = require('./orbitalelements');
-
 
 ##### Get position & velocity from elements:
     let μ = 1; //GM = μ = 398600 for earth 
@@ -29,6 +32,8 @@ This is a simple javascript library which allows you to solve for the [orbital e
     let v_p = [0.01436795, 0.00921151, -0.00442301];
     let elements = OrbitElement.getElements(r_p,v_p, μ);
     console.log(elements)
+    
+    
     
 
 
