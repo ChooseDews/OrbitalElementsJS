@@ -91,6 +91,13 @@
       </form>
   </div>
 
+  <div class="entry p-0">
+  
+      <button @click="groundTrack = !groundTrack" v-if="!groundTrack" class="m-3 btn btn-primary btn-sm">Compute Ground Map</button>
+      <button @click="groundTrack = !groundTrack" v-if="groundTrack" class="m-3 btn btn-primary btn-sm">Show Orbit View</button>
+
+  </div>
+
 
   <div class="entry">
     <table class="vars">
@@ -117,8 +124,8 @@
     <div class="crash alert alert-danger" v-if="crash">
         Orbit Collides With Earth
     </div>
-    <map-display :positions="positions" :stats="stats"></map-display>
-    <orbit-view :positions="positions" :stats="stats"></orbit-view>
+    <map-display v-if="groundTrack" :r="r" :v="v" :mu="mu"></map-display>
+    <orbit-view v-if="!groundTrack" :positions="positions" :stats="stats"></orbit-view>
   </div>
 
 </div>
@@ -162,9 +169,10 @@ export default {
       elements: {},
       v: vectToObject(v_p) || {},
       r: vectToObject(r_p) || {},
-      mu: 398600,
+      mu: 398600.4418,
       stats: {},
-      crash: false
+      crash: false,
+      groundTrack: false
     }
   },
   methods: {
@@ -208,6 +216,7 @@ export default {
 
     },
     toPosition(){
+      this.groundTrack = false;
       let n = this.elements;
       let mu = this.mu;
       let res = library.computeECI(n.ω, n.i, n.Ω, n.a, n.e, n.ν, mu, true);

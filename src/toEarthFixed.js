@@ -1,8 +1,10 @@
 //library
 const $ = require('mathjs')
 let d2Rad = (d) => d * $.pi / 180;
-
+let r2d = 180/$.pi;
 let createTransform = (t,OmegaE) => {
+
+    if(!OmegaE) OmegaE = 0.00007292115; //rad/sec
 
     q = t*OmegaE;
     const transfer = [ [$.sin(q), -$.cos(q), 0], 
@@ -17,9 +19,9 @@ let createTransform = (t,OmegaE) => {
 };
 
 let getLatLon = (r) => {
-    lon = $.atan2(r(2), r(1));
-    k = $.sqrt(r(2)*r(2) + r(1)*r(1));
-    lat = $.atan2(r(3), k);
+    lon = $.atan2(r[1], r[0])*r2d;
+    k = $.sqrt(r[1]*r[1] + r[0]*r[0]);
+    lat = $.atan2(r[2], k)*r2d;
     return {lon, lat}
 }
 
@@ -31,5 +33,6 @@ let computeECIF = (r, t, OmegaE) => {
 module.exports = {
     createTransform,
     computeECIF,
-    d2Rad
+    d2Rad,
+    getLatLon
 };

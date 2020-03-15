@@ -1,11 +1,22 @@
 <template>
-  <div id="map-view"></div>
+  <div id="map-view">
+    <div class="ground-info" v-if="period">Ground Track covers 2 orbital periods: ({{period.toFixed(4)}} hours). Assumes t=0 at inital position</div>  
+  </div>
 </template>
 
 <script>
 
 import * as THREE from "three";
 const $ = require('mathjs')
+
+import lib from './../src/lib.js';
+let computeECIFOverTime = lib.computeECIFOverTime;
+let getElements = lib.getElements;
+
+
+ 
+let objectToVec = (v) => ([v.x, v.y, v.z]);
+
 
 const PI = $.pi;
 const d2r = PI/180;
@@ -14,12 +25,18 @@ const r2d = 180/PI
 
 
 export default {
+    props: ['mu', 'r', 'v'],
     data(){
         return {
-            scene: null
+            scene: null,
+            period: null
         }
     },
     methods: {
+       deleteObject(objName){
+        var selectedObject = this.scene.getObjectByName(objName);
+        this.scene.remove( selectedObject );
+        },
         addLatLng(lat, long){ //expected in degrees
 
 
@@ -29,6 +46,22 @@ export default {
             let latRad = lat*d2r;
             let mercN = $.log($.tan((PI/4)+(latRad/2)));
             let y = (mapHeight/2)-(mapWidth*mercN/(2*PI));
+            let dotGeometry = new THREE.Geometry();
+
+
+            x = x-5;
+            y = 2.5-y;
+            console.log(y);
+            if(y > 2.5) y = y-5;
+            if(y < -2.5) y= y+5;
+
+            dotGeometry.vertices.push(new THREE.Vector3(x, y, 0));
+            let dotMaterial = new THREE.PointsMaterial( { size: 3, sizeAttenuation: false, color: 0xFF0000 } );
+            let dot = new THREE.Points( dotGeometry, dotMaterial );
+            dot.name = 'track-dot'
+
+            this.scene.add( dot );
+
 
 
             return {x,y}
@@ -37,6 +70,30 @@ export default {
     },
     mounted(){
 
+
+console.log(this.r)
+
+let r = [-1217.39430415697, -3091.41210822807, -6173.40732877317];
+let v = [9.88635815507896, -0.446121737099303, -0.890884522967222];
+
+if(this.r) r = objectToVec(this.r);
+if(this.v) v= objectToVec(this.v);
+
+
+let mu = this.mu || 398600.4418;
+let oe = getElements(r,v,mu);
+
+console.log(oe);
+
+
+let t_0 = 0;
+let period = 2*$.pi*$.sqrt($.pow(oe.a,3)/mu)*2;
+
+this.period = period/60/60;
+
+let {coords} = computeECIFOverTime(r, v, mu, t_0, period+t_0, 3*60);
+
+console.log(coords.length)
 
         // Create the scene and a camera to view it
 var scene = new THREE.Scene();
@@ -58,9 +115,6 @@ let container = document.getElementById("map-view");
 container.appendChild(renderer.domElement);
     let width = container.offsetWidth;
     renderer.setSize(width, window.innerHeight);
-
-
-
 
 
 
@@ -140,14 +194,6 @@ scene.add(light)
 
 
 
-var dotGeometry = new THREE.Geometry();
-dotGeometry.vertices.push(new THREE.Vector3( -5, -2.5, 0));
-var dotMaterial = new THREE.PointsMaterial( { size: 5, sizeAttenuation: false } );
-var dot = new THREE.Points( dotGeometry, dotMaterial );
-scene.add( dot );
-
-
-
 
 
 
@@ -158,8 +204,19 @@ scene.add( dot );
 
 // The main animation function that re-renders the scene each animation frame
 function animate() {
+
+
+setTimeout(function(){
+
 requestAnimationFrame( animate );
   renderer.render( scene, camera );
+
+
+
+}, 1000)
+
+
+
 }
 animate();
 
@@ -172,7 +229,13 @@ animate();
 
 this.scene = scene
 
-console.log(this.addLatLng(50,50))
+
+
+for(let coord of coords){
+  this.addLatLng(coord.lat, coord.lon)
+}
+
+
 
 
 
@@ -183,5 +246,13 @@ console.log(this.addLatLng(50,50))
 </script>
 
 <style>
+
+.ground-info{
+
+  position: absolute;
+  color: white;
+  bottom: 0;
+  padding: 10px;
+}
 
 </style>

@@ -192,7 +192,7 @@ export default {
     let momentumArrow = new THREE.ArrowHelper(
       momentumVector,
       earth.position.clone(),
-      300,
+      200,
       momentumVectorColor
     );
     scene.add(momentumArrow);
@@ -351,6 +351,9 @@ export default {
       camera2.lookAt(scene2.position);
       render();
     })();
+
+
+     this.addPoints();
 
 
 
