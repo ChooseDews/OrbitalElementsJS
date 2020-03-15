@@ -47,7 +47,7 @@
       </tr>
     </table>
 
-    <button type="submit" class="m-3 btn btn-primary btn-sm">Convert</button>
+    <button type="submit" class="m-3 btn btn-primary btn-sm">Update</button>
   </form>
   </div>
   <div class="entry">
@@ -87,15 +87,8 @@
         <td class="unit">km/s</td>
       </tr>
     </table>
-    <button type="submit" class="m-3 btn btn-primary btn-sm">Convert</button>
+    <button type="submit" class="m-3 btn btn-primary btn-sm">Update</button>
       </form>
-  </div>
-
-  <div class="entry p-0">
-  
-      <button @click="groundTrack = !groundTrack" v-if="!groundTrack" class="m-3 btn btn-primary btn-sm">Compute Ground Map</button>
-      <button @click="groundTrack = !groundTrack" v-if="groundTrack" class="m-3 btn btn-primary btn-sm">Show Orbit View</button>
-
   </div>
 
 
@@ -111,6 +104,7 @@
 
   <div class="entry">
     <h5 class="p-2 m-0">John Dews-Flick</h5>
+    <h6>March, 2020</h6>  
     <h6>University of Florida</h6>
 
   </div>
@@ -120,12 +114,19 @@
   </div>
 
 
-  <div class="mainbar">
+  <div class="mainbar" id="mainbar" v-if="loaded">
+    <div class="panel-tabs">
+      <div @click="groundTrack=false" :class="{active:!groundTrack}">Orbit View</div>
+      <div @click="groundTrack=true" :class="{active:groundTrack}">Map View</div>
+    </div>
     <div class="crash alert alert-danger" v-if="crash">
         Orbit Collides With Earth
     </div>
-    <map-display v-if="groundTrack" :r="r" :v="v" :mu="mu"></map-display>
-    <orbit-view v-if="!groundTrack" :positions="positions" :stats="stats"></orbit-view>
+     <div class="float-credit">
+        John Dews-Flick
+    </div>
+    <map-display v-show="groundTrack" :r="r" :v="v" :mu="mu"></map-display>
+    <orbit-view v-show="!groundTrack" :positions="positions" :stats="stats"></orbit-view>
   </div>
 
 </div>
@@ -172,8 +173,14 @@ export default {
       mu: 398600.4418,
       stats: {},
       crash: false,
-      groundTrack: false
+      groundTrack: false,
+      loaded: false
     }
+  },
+  mounted(){
+
+    this.toElements();
+    this.loaded = true;
   },
   methods: {
     random(){
@@ -216,7 +223,6 @@ export default {
 
     },
     toPosition(){
-      this.groundTrack = false;
       let n = this.elements;
       let mu = this.mu;
       let res = library.computeECI(n.ω, n.i, n.Ω, n.a, n.e, n.ν, mu, true);
@@ -249,6 +255,12 @@ export default {
 </script>
 
 <style lang="scss">
+
+body{
+    overscroll-behavior-y: none;
+    height: 100vh;
+    overflow: hidden;
+}
 
 
 .crash{
@@ -303,6 +315,15 @@ width: 100%;
   background: grey;
 }
 
+.float-credit{
+  position: absolute;
+  z-index: 1000;
+  padding: 5px;
+  bottom: 0;
+  right: 0;
+  color: white;
+}
+
 
 .entry{
   border: 1px dashed grey;
@@ -312,8 +333,51 @@ width: 100%;
   border-top: none;
 }
 
+.panel-tabs{
+  position: absolute;
+  top: 0;
+  left: 50vw;
+  color: white;
+
+  div{
+    float: left;
+    padding: 3px 10px;
+    border: 1px solid white;
+  }
+
+  div.active{
+    color: black;
+    background: white;
+  }
+
+}
 
 @media only screen and (max-width: 700px) {
+
+.panel-tabs{
+  position: inherit;
+  color: black;
+
+  
+
+}
+
+.panel-tabs .active{
+    background: black !important;
+    color:white !important;
+  }
+  .ground-info{
+    display: none;
+  }
+
+
+body{
+    overscroll-behavior-y: inherit;
+    height: inherit;
+    overflow: inherit;
+}
+
+
   .sidebar{
     float: none;
     width: 100vw;
@@ -330,6 +394,8 @@ width: 100%;
     display: none;
   }
 }
+
+
 
 @media only screen and (min-width: 700px) {
 

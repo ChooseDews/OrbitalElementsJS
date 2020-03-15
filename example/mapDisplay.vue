@@ -29,10 +29,56 @@ export default {
     data(){
         return {
             scene: null,
-            period: null
+            period: null,
+            dots: [],
         }
     },
+    watch: {
+      r(){
+        this.updateTrack();
+      }
+    },
     methods: {
+       updateTrack(){
+
+
+var t0 = performance.now();
+
+
+
+let r = [-1217.39430415697, -3091.41210822807, -6173.40732877317];
+let v = [9.88635815507896, -0.446121737099303, -0.890884522967222];
+if(this.r) r = objectToVec(this.r);
+if(this.v) v= objectToVec(this.v);
+let mu = this.mu || 398600.4418;
+let oe = getElements(r,v,mu);
+console.log(oe);
+let t_0 = 0;
+let period = 2*$.pi*$.sqrt($.pow(oe.a,3)/mu)*2;
+this.period = period/60/60;
+let {coords} = computeECIFOverTime(r, v, mu, t_0, period+t_0, 5*60);
+console.log(coords.length)
+
+
+this.clearDots()
+for(let coord of coords){
+  this.addLatLng(coord.lat, coord.lon)
+}
+
+
+var t1 = performance.now();
+console.log("Map Updated Took" + (t1 - t0) + " milliseconds.")
+
+this.animate();
+
+
+
+       },
+       clearDots(){
+         for(let dot of this.dots){
+           this.scene.remove(dot);
+         }
+       },
        deleteObject(objName){
         var selectedObject = this.scene.getObjectByName(objName);
         this.scene.remove( selectedObject );
@@ -51,15 +97,14 @@ export default {
 
             x = x-5;
             y = 2.5-y;
-            console.log(y);
             if(y > 2.5) y = y-5;
             if(y < -2.5) y= y+5;
 
             dotGeometry.vertices.push(new THREE.Vector3(x, y, 0));
             let dotMaterial = new THREE.PointsMaterial( { size: 3, sizeAttenuation: false, color: 0xFF0000 } );
             let dot = new THREE.Points( dotGeometry, dotMaterial );
-            dot.name = 'track-dot'
 
+            this.dots.push(dot);            
             this.scene.add( dot );
 
 
@@ -71,29 +116,9 @@ export default {
     mounted(){
 
 
-console.log(this.r)
-
-let r = [-1217.39430415697, -3091.41210822807, -6173.40732877317];
-let v = [9.88635815507896, -0.446121737099303, -0.890884522967222];
-
-if(this.r) r = objectToVec(this.r);
-if(this.v) v= objectToVec(this.v);
 
 
-let mu = this.mu || 398600.4418;
-let oe = getElements(r,v,mu);
 
-console.log(oe);
-
-
-let t_0 = 0;
-let period = 2*$.pi*$.sqrt($.pow(oe.a,3)/mu)*2;
-
-this.period = period/60/60;
-
-let {coords} = computeECIFOverTime(r, v, mu, t_0, period+t_0, 3*60);
-
-console.log(coords.length)
 
         // Create the scene and a camera to view it
 var scene = new THREE.Scene();
@@ -113,8 +138,10 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 // Add the canvas to the DOM
 let container = document.getElementById("map-view");
 container.appendChild(renderer.domElement);
-    let width = container.offsetWidth;
-    renderer.setSize(width, window.innerHeight);
+
+
+let width = container.offsetWidth || document.getElementById("mainbar").offsetWidth;
+renderer.setSize(width, window.innerHeight);
 
 
 
@@ -122,6 +149,9 @@ container.appendChild(renderer.domElement);
 
 // Specify the portion of the scene visiable at any time (in degrees)
 var fieldOfView = 75;
+
+if(window.innerWidth < 700) fieldOfView = 110;
+
 
 // Specify the camera's aspect ratio
 var aspectRatio = width / window.innerHeight;
@@ -220,10 +250,9 @@ requestAnimationFrame( animate );
 }
 animate();
 
-
-
-
-
+this.animate = () => {
+    renderer.render( scene, camera );
+};
 
 
 
@@ -231,12 +260,9 @@ this.scene = scene
 
 
 
-for(let coord of coords){
-  this.addLatLng(coord.lat, coord.lon)
-}
 
 
-
+this.updateTrack()
 
 
 

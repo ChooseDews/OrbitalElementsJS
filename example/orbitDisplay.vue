@@ -102,7 +102,7 @@ export default {
     //setup main canvas
     container = document.getElementById("container");
     renderer = new THREE.WebGLRenderer();
-    let width = container.offsetWidth;
+    let width = container.offsetWidth || document.getElementById("mainbar").offsetWidth;
     renderer.setClearColor(backgroundColor, 1);
     renderer.setSize(width, window.innerHeight);
     container.appendChild(renderer.domElement);
