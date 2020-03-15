@@ -117,6 +117,7 @@
     <div class="crash alert alert-danger" v-if="crash">
         Orbit Collides With Earth
     </div>
+    <map-display :positions="positions" :stats="stats"></map-display>
     <orbit-view :positions="positions" :stats="stats"></orbit-view>
   </div>
 
@@ -127,6 +128,8 @@
 <script>
 const $ = require('mathjs')
 import orbitView from './orbitDisplay.vue'
+import mapDisplay from './mapDisplay.vue'
+
 import library from './../src/lib.js';
 console.log('here', library);
 
@@ -153,7 +156,7 @@ function rNumber(min, max) {
 }
 
 export default {
-  components: {orbitView},
+  components: {orbitView, mapDisplay},
   data(){
     return {
       elements: {},
@@ -251,7 +254,7 @@ export default {
 }
 
 .mainbar{
-  width: calc(100vw - 300px);
+  width: calc(100% - 300px);
   float: left;
 }
 
