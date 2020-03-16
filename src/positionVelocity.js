@@ -1,77 +1,72 @@
 //library
-const $ = require('mathjs')
-let d2Rad = (d) => d * $.pi / 180;
+const $ = require("mathjs");
+let d2Rad = d => (d * $.pi) / 180;
 
 let createTransform = (ω, i, Ω) => {
+  const t_1 = [
+    [$.cos(ω), -$.sin(ω), 0],
+    [$.sin(ω), $.cos(ω), 0],
+    [0, 0, 1]
+  ];
 
-    const t_1 = [
-        [$.cos(ω), -$.sin(ω), 0],
-        [$.sin(ω), $.cos(ω), 0],
-        [0, 0, 1]
-    ];
+  const t_2 = [
+    [1, 0, 0],
+    [0, $.cos(i), -$.sin(i)],
+    [0, $.sin(i), $.cos(i)]
+  ];
 
-    const t_2 = [
-        [1, 0, 0],
-        [0, $.cos(i), -$.sin(i)],
-        [0, $.sin(i), $.cos(i)]
-    ];
+  const t_3 = [
+    [$.cos(Ω), -$.sin(Ω), 0],
+    [$.sin(Ω), $.cos(Ω), 0],
+    [0, 0, 1]
+  ];
 
-    const t_3 = [
-        [$.cos(Ω), -$.sin(Ω), 0],
-        [$.sin(Ω), $.cos(Ω), 0],
-        [0, 0, 1]
-    ];
-
-    return (b) => {
-        b = $.multiply(t_1, b) //#3 Eular
-        b = $.multiply(t_2, b) //#1
-        return $.multiply(t_3, b) //#3
-    };
-
+  return b => {
+    b = $.multiply(t_1, b); //#3 Eular
+    b = $.multiply(t_2, b); //#1
+    return $.multiply(t_3, b); //#3
+  };
 };
 
 let computeECI = (ω, i, Ω, a, e, ν, μ, isDegree) => {
-    //these must be numbers!
-    ω = Number(ω);
-    i = Number(i);
-    Ω = Number(Ω);
-    a = Number(a);
-    e = Number(e);
-    ν = Number(ν);
-    μ = Number(μ);
+  //these must be numbers!
+  ω = Number(ω);
+  i = Number(i);
+  Ω = Number(Ω);
+  a = Number(a);
+  e = Number(e);
+  ν = Number(ν);
+  μ = Number(μ);
 
-    if (isDegree || $.max(ω, i, Ω, ν) > 7) {
-        ω = d2Rad(ω);
-        i = d2Rad(i);
-        Ω = d2Rad(Ω);
-        ν = d2Rad(ν);
-    }
+  if (isDegree || $.max(ω, i, Ω, ν) > 7) {
+    ω = d2Rad(ω);
+    i = d2Rad(i);
+    Ω = d2Rad(Ω);
+    ν = d2Rad(ν);
+  }
 
+  //start the calculations
+  let p = a * (1 - e * e);
+  let r = p / (1 + e * $.cos(ν));
+  let G = $.sqrt(μ / p);
+  let T = createTransform(ω, i, Ω);
 
-    //start the calculations
-    let p = a * (1 - e * e);
-    let r = p / (1 + e * $.cos(ν));
-    let G = $.sqrt(μ / p);
-    let T = createTransform(ω, i, Ω);
+  let r_vec = [r * $.cos(ν), r * $.sin(ν), 0];
+  let v_vec = [-$.sin(ν) * G, ($.cos(ν) + e) * G, 0];
 
-    let r_vec = [r * $.cos(ν), r * $.sin(ν), 0];
-    let v_vec = [-$.sin(ν) * G, ($.cos(ν) + e) * G, 0];
+  let h_p = $.cross(r_vec, v_vec);
 
-    let h_p = $.cross(r_vec, v_vec);
-
-
-    return {
-        r: T(r_vec),
-        v: T(v_vec),
-        p,
-        a,
-        h_p
-    }
-
-}
+  return {
+    r: T(r_vec),
+    v: T(v_vec),
+    p,
+    a,
+    h_p
+  };
+};
 
 module.exports = {
-    createTransform,
-    computeECI,
-    d2Rad
+  createTransform,
+  computeECI,
+  d2Rad
 };

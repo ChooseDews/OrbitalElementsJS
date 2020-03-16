@@ -7,7 +7,7 @@ let toPositionVelocity = require('./positionVelocity').computeECI;
 let toEarthFixed = require('./toEarthFixed').computeECIF;
 let getLatLon = require('./toEarthFixed').getLatLon;
 
-let intergrate = (a,b,n,k,f)=>(g=i=>i--&&g(i)+f(a+k++/n)/n)(n,k^=a>b,n/=b-a);
+let intergrate = (a,b,n,k,f)=>(g=i=>i--&&g(i)+f(a+k++/n)/n)(n,k^=a>b,n/=b-a); //code golf js intergrator
 
 
 let intergrand = (nu , p , e ,mu) => {

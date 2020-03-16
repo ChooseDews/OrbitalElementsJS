@@ -134,16 +134,16 @@
 </template>
 
 <script>
-const $ = require('mathjs')
-import orbitView from './orbitDisplay.vue'
-import mapDisplay from './mapDisplay.vue'
+const $ = require("mathjs");
+import orbitView from "./orbitDisplay.vue";
+import mapDisplay from "./mapDisplay.vue";
 
-import library from './../src/lib.js';
-console.log('here', library);
+import library from "./../src/lib.js";
+console.log("here", library);
 
-let vectToObject = (v) => ({x: v[0], y: v[1], z: v[2] });
-let objectToVec = (v) => ([v.x, v.y, v.z]);
-let roundVec = (v) => v.map(x=>$.round(x,6));
+let vectToObject = v => ({ x: v[0], y: v[1], z: v[2] });
+let objectToVec = v => [v.x, v.y, v.z];
+let roundVec = v => v.map(x => $.round(x, 6));
 
 //let r_p = [4249.24395473, -2054.84062287, 2446.99585787];
 //let v_p = [0.01436795, 0.00921151, -0.00442301];
@@ -151,21 +151,21 @@ let roundVec = (v) => v.map(x=>$.round(x,6));
 let r_p = [5634.297397, -2522.807863, -5037.930889]; //mini-project 1 - Molniya orbit
 let v_p = [8.286176, 1.815144, 3.624759]; //mini-project 1 - Molniya orbit
 
-let gatherPoint = function(n, mu){
+let gatherPoint = function(n, mu) {
   let angle = [];
-  for(let i = 0; i < 362; i++){
+  for (let i = 0; i < 362; i++) {
     angle[i] = library.computeECI(n.ω, n.i, n.Ω, n.a, n.e, i, mu, true);
   }
   return angle;
-}
+};
 
 function rNumber(min, max) {
   return $.round(Math.random() * (max - min) + min, 4);
 }
 
 export default {
-  components: {orbitView, mapDisplay},
-  data(){
+  components: { orbitView, mapDisplay },
+  data() {
     return {
       elements: {},
       v: vectToObject(v_p) || {},
@@ -175,15 +175,14 @@ export default {
       crash: false,
       groundTrack: false,
       loaded: false
-    }
+    };
   },
-  mounted(){
-
+  mounted() {
     this.toElements();
     this.loaded = true;
   },
   methods: {
-    random(){
+    random() {
       //random input some elements
       this.elements = {
         ω: rNumber(0, 360),
@@ -192,26 +191,25 @@ export default {
         Ω: rNumber(0, 360),
         ν: rNumber(0, 360),
         a: rNumber(20000, 80000)
-      }
+      };
       this.toPosition();
     },
-    updateChart(){
-
-      let mu = this.mu
+    updateChart() {
+      let mu = this.mu;
       let elements = this.elements;
       let angleStats = gatherPoint(elements, mu);
-      let positions = angleStats.map(x=>x.r);
+      let positions = angleStats.map(x => x.r);
       this.positions = positions;
 
       let r = objectToVec(this.r);
       let v = objectToVec(this.v);
-      console.log('here');
+      console.log("here");
       let orbitVectors = library.orbitVectors(r, v, mu);
-      console.log('here', orbitVectors);
+      console.log("here", orbitVectors);
 
       this.crash = false;
 
-      if(orbitVectors.r_min < 6371){
+      if (orbitVectors.r_min < 6371) {
         this.crash = true;
       }
 
@@ -219,103 +217,87 @@ export default {
         r: this.r,
         v: this.v,
         orbitVectors
-      }
-
+      };
     },
-    toPosition(){
+    toPosition() {
       let n = this.elements;
       let mu = this.mu;
       let res = library.computeECI(n.ω, n.i, n.Ω, n.a, n.e, n.ν, mu, true);
       console.log(res);
-      this.v = vectToObject(roundVec(res.v))
-      this.r = vectToObject(roundVec(res.r))
+      this.v = vectToObject(roundVec(res.v));
+      this.r = vectToObject(roundVec(res.r));
 
       this.updateChart();
-
-
     },
-    toElements(){
-
+    toElements() {
       let r_p = objectToVec(this.r);
       let v_p = objectToVec(this.v);
       let mu = this.mu;
       let res = library.getElements(r_p, v_p, mu);
-      res['Ω'] = library.r2Deg(res['Ω'])
-      res['i'] = library.r2Deg(res['i'])
-      res['ν'] = library.r2Deg(res['ν'])
-      res['ω'] = library.r2Deg(res['ω'])
+      res["Ω"] = library.r2Deg(res["Ω"]);
+      res["i"] = library.r2Deg(res["i"]);
+      res["ν"] = library.r2Deg(res["ν"]);
+      res["ω"] = library.r2Deg(res["ω"]);
       res.e = $.round(res.e, 4);
       res.a = $.round(res.a, 4);
       this.elements = res;
       this.updateChart();
-
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
-
-body{
-    overscroll-behavior-y: none;
-    height: 100vh;
-    overflow: hidden;
+body {
+  overscroll-behavior-y: none;
+  height: 100vh;
+  overflow: hidden;
 }
 
-
-.crash{
+.crash {
   position: absolute;
   padding: 15px;
   right: 0;
 }
 
-.sidebar{
+.sidebar {
   width: 300px;
   float: left;
 }
 
-.mainbar{
+.mainbar {
   width: calc(100% - 300px);
   float: left;
 }
 
-
-.vars{
-
+.vars {
   width: 100%;
 
+  input {
+    width: 100%;
+  }
 
+  .title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    width: 30px;
+  }
 
-input{
-width: 100%;
+  .unit {
+    width: 30px;
+    padding-left: 2px;
+    font-size: 0.9em;
+    color: grey;
+    text-align: left;
+  }
 }
 
-.title{
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  width: 30px;
-}
-
-
-.unit{
-  width: 30px;
-  padding-left: 2px;
-  font-size: 0.9em;
-  color: grey;
-  text-align: left;
-}
-
-
-
-
-}
-
-.col-3{
+.col-3 {
   background: grey;
 }
 
-.float-credit{
+.float-credit {
   position: absolute;
   z-index: 1000;
   padding: 5px;
@@ -324,8 +306,7 @@ width: 100%;
   color: white;
 }
 
-
-.entry{
+.entry {
   border: 1px dashed grey;
   max-width: 300px;
   text-align: center;
@@ -333,80 +314,65 @@ width: 100%;
   border-top: none;
 }
 
-.panel-tabs{
+.panel-tabs {
   position: absolute;
   top: 0;
   left: 50vw;
   color: white;
 
-  div{
+  div {
     float: left;
     padding: 3px 10px;
     border: 1px solid white;
   }
 
-  div.active{
+  div.active {
     color: black;
     background: white;
   }
-
 }
 
 @media only screen and (max-width: 700px) {
-
-.panel-tabs{
-  position: inherit;
-  color: black;
-
-  
-
-}
-
-.panel-tabs .active{
-    background: black !important;
-    color:white !important;
+  .panel-tabs {
+    position: inherit;
+    color: black;
   }
-  .ground-info{
+
+  .panel-tabs .active {
+    background: black !important;
+    color: white !important;
+  }
+  .ground-info {
     display: none;
   }
 
-
-body{
+  body {
     overscroll-behavior-y: inherit;
     height: inherit;
     overflow: inherit;
-}
+  }
 
-
-  .sidebar{
+  .sidebar {
     float: none;
     width: 100vw;
   }
-  .mainbar{
+  .mainbar {
     float: none;
     width: 100vw;
   }
-  .entry{
+  .entry {
     max-width: 100%;
   }
 
-  #inset{
+  #inset {
     display: none;
   }
 }
 
-
-
 @media only screen and (min-width: 700px) {
-
-  .sidebar{
+  .sidebar {
     max-height: 100vh;
     overflow-y: auto;
   }
-
-
 }
-
-
-
 </style>
